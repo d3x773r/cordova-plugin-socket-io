@@ -13,6 +13,9 @@ cordova plugin rm https://github.com/d3x773r/cordova-plugin-socketIO
 This plugin uses these libraries:
 - https://github.com/socketio/socket.io-client-java
 
+For more information about socket.io see that:
+- https://socket.io/docs/
+
 ###Usage
 
 ```js
