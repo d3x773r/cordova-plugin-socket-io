@@ -28,8 +28,8 @@
   <description>Socket.IO plugin with native Android background services</description>
   <keywords>socket.io,cordova,phonegap,service,background-service,cordova-android,android</keywords>
   <license>Apache 2.0</license>
-  <repo>https://github.com/d3x773r/cordova-plugin-socket.io</repo>
-  <issue>https://github.com/d3x773r/cordova-plugin-socket.io/issues</issue>
+  <repo>https://github.com/d3x773r/cordova-plugin-socket-io</repo>
+  <issue>https://github.com/d3x773r/cordova-plugin-socket-io/issues</issue>
   <author>Williaan Souza (dextter)</author>
 
   <engines>
