@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/d3x773r/cordova-plugin-socket.io.git"
+    "url": "git+https://github.com/d3x773r/cordova-plugin-socket-io.git"
   },
   "keywords": [
     "socket.io",
@@ -32,7 +32,7 @@
   "author": "Williaan Souza (dextter)",
   "license": "Apache 2.0",
   "bugs": {
-    "url": "https://github.com/d3x773r/cordova-plugin-socket.io/issues"
+    "url": "https://github.com/d3x773r/cordova-plugin-socket-io/issues"
   },
-  "homepage": "https://github.com/d3x773r/cordova-plugin-socket.io#readme"
+  "homepage": "https://github.com/d3x773r/cordova-plugin-socket-io#readme"
 }
