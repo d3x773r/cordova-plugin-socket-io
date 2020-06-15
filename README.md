@@ -6,9 +6,9 @@ socket.io plugin for PhoneGap/Cordova with native Android background service.
 Currently Android only.
 
 ```
-cordova plugin add https://github.com/d3x773r/cordova-plugin-socket-io
+cordova plugin add https://github.com/d3x773r/cordova-plugin-socket-io.git
 
-cordova plugin rm https://github.com/d3x773r/cordova-plugin-socket-io
+cordova plugin rm https://github.com/d3x773r/cordova-plugin-socket-io.git
 ```
 
 This plugin uses these libraries:
