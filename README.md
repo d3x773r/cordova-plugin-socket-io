@@ -20,7 +20,7 @@ cordova.plugin.socket.io.connect('http://localhost:3000', function(socket) {
   console.log("connected");
   socket.on("connection", function() {
     console.log("connected");
-    socket.emit("message", {text: "My name is Hogehoge"}, function(data) {
+    socket.emit("message", {text: "My name is HAL 9000"}, function(data) {
       console.log(data);
     });
   });
