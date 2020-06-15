@@ -11,7 +11,7 @@ cordova plugin add https://github.com/d3x773r/cordova-plugin-socket-io.git
 cordova plugin rm https://github.com/d3x773r/cordova-plugin-socket-io.git
 ```
 
-This plugin uses these libraries:
+This plugin uses:
 - https://github.com/socketio/socket.io-client-java
 
 For more information about socket.io see that:
