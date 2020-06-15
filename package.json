@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-socket-io",
-  "version": "4.0.2",
+  "version": "1.0.0",
   "description": "Socket.IO plugin with native Android background services",
   "cordova": {
     "id": "cordova-plugin-socket-io",
