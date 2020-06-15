@@ -1,0 +1,38 @@
+{
+  "name": "cordova-plugin-socket-io",
+  "version": "4.0.2",
+  "description": "Socket.IO plugin with native Android background services",
+  "cordova": {
+    "id": "cordova-plugin-socket-io",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d3x773r/cordova-plugin-socket.io.git"
+  },
+  "keywords": [
+    "socket.io",
+    "cordova",
+    "phonegap",
+    "service",
+    "background-service",
+    "cordova-android",
+    "android",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "engines": [
+    {
+      "name": "cordova-android",
+      "version": ">=6.3.0"
+    }
+  ],
+  "author": "Williaan Souza (dextter)",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/d3x773r/cordova-plugin-socket.io/issues"
+  },
+  "homepage": "https://github.com/d3x773r/cordova-plugin-socket.io#readme"
+}
