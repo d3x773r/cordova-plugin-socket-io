@@ -60,29 +60,6 @@ http.listen(3000, function(){
 
 ###### CLIENT
 ```js
-cordova.plugin.socket.io.connect('http://localhost:3000', function(socket) {
-  console.log("connected");
-  socket.on("connection", function() {
-    console.log("connected");
-    socket.emit("my custom event", {text: "My name is HAL 9000"}, function(data) {
-      console.log(data);
-    });
-  });
-  socket.on('message', function(message) {
-    console.log('message', message);
-  });
-  socket.on('test', function(message) {
-    console.log('message', message);
-  });
-  socket.on('disconnect', function () {
-    console.log('disconnect');
-  });
-  socket.on("error", function(err) {
-    console.log(err);
-  });
-});
-
-// USING OPTIONS
 cordova.plugin.socket.io.connect({
       url: 'http://localhost:3000',
       reconnection: true,
