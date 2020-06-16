@@ -17,11 +17,11 @@ This plugin uses:
 For more information about socket.io see that:
 - https://socket.io/docs/
 
-###Usage
+## Usage
+
+###### SERVER
 
 ```js
-// SERVER
-
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -58,9 +58,8 @@ http.listen(3000, function(){
 });
 ```
 
+###### CLIENT
 ```js
-// CLIENT
-
 cordova.plugin.socket.io.connect('http://localhost:3000', function(socket) {
   console.log("connected");
   socket.on("connection", function() {
@@ -83,5 +82,3 @@ cordova.plugin.socket.io.connect('http://localhost:3000', function(socket) {
   });
 });
 ```
-
-###Note
