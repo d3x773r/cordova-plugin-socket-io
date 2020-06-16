@@ -81,4 +81,28 @@ cordova.plugin.socket.io.connect('http://localhost:3000', function(socket) {
     console.log(err);
   });
 });
+
+// USING OPTIONS
+cordova.plugin.socket.io.connect({
+      url: 'http://localhost:3000',
+      reconnection: true,
+      reconnectionDelay: 60000,
+      timeout: -1,
+      headers: {
+        Authorization: 'dl3230r4frlgtmk'
+      },
+      query: new URLSearchParams({
+        test: '123'
+      }).toString()
+    }, function (socket) {
+      socket.on("connected", function () {
+        console.log("connected to ", socket);
+      });
+      socket.on('disconnect', function () {
+        console.log('disconnect');
+      });
+      socket.on("error", function (err) {
+        console.log(err);
+      });
+  });
 ```
