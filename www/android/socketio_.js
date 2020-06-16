@@ -1,3 +1,23 @@
+cordova.define("cordova-plugin-socket-io.SocketIO", function(require, exports, module) {
+/*
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+*/
+
 var exec = require('cordova/exec');
 
 const PLUGIN_NAME = "SocketIO";
@@ -93,7 +113,7 @@ var BaseClass = function() {
  self.addEventListenerOnce = self.one;
 
  self.errorHandler = function(msg) {
-   if (params_.debug) console.error(msg);
+   console.error(msg);
    self.trigger('error', msg);
    return false;
  };
@@ -108,8 +128,6 @@ var Socket = function() {
     writable: false
   });
 };
-
-var params_ = {};
 
 Socket.prototype = new BaseClass();
 
@@ -135,11 +153,10 @@ Socket.prototype.emit = function(eventName) {
       }
 
       var args = Array.prototype.slice.call(arguments, 0);
-      if (params_.debug) {
-        console.log(res);
-        console.log(args);
-        console.log(arguments);
-      }
+
+      console.log(res);
+      console.log(args);
+      console.log(arguments);
 
       callback.apply(self, args);
     }
@@ -152,9 +169,13 @@ Socket.prototype.emit = function(eventName) {
   exec.call(cordova, success, error, PLUGIN_NAME, "emit", args);
 };
 
-var connect = function(params, callbackSuccess, callbackError) {
+var connect = function(uri, callbackSuccess, callbackError) {
 
-  params_ = params;
+  var options = {
+    reconnection: true,
+    reconnectionDelay: 60000,
+    timeout: -1
+  };
 
   var socket = new Socket();
   var socketOn_ = socket.on;
@@ -176,11 +197,11 @@ var connect = function(params, callbackSuccess, callbackError) {
       if (cnt == 0) {
         callback._hashCode = res;
       } else {
-        if (params_.debug) console.log(res);
+        console.log(res);
 
         var args = Array.prototype.slice.call(arguments, 0);
 
-        if (params_.debug) console.log(args);
+        console.log(args);
 
         callback.apply(socket, args);
       }
@@ -242,7 +263,7 @@ var connect = function(params, callbackSuccess, callbackError) {
 
   exec(function() {
 
-    if (params_.debug) console.log("---connected");
+    console.log("---connected");
 
     if (typeof callbackSuccess === "function") {
       callbackSuccess(socket);
@@ -256,9 +277,9 @@ var connect = function(params, callbackSuccess, callbackError) {
 
     socket.trigger("error", err);
 
-  }, PLUGIN_NAME, "connect", [params]);
+  }, PLUGIN_NAME, "connect", [uri]);
 
-  if (params_.debug) console.log('try connect to socket...');
+  console.log('try connect to socket...');
 
   return socket;
 };
@@ -266,3 +287,5 @@ var connect = function(params, callbackSuccess, callbackError) {
 module.exports = {
   connect: connect
 };
+
+});

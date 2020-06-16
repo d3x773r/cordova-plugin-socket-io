@@ -21,19 +21,19 @@ package com.gurpster.cordova.socket.io;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
-
 import io.socket.client.Ack;
 import io.socket.client.IO;
+import io.socket.client.Manager;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-
+import io.socket.engineio.client.Transport;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,10 +41,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SocketService extends Service {
 
@@ -56,11 +54,14 @@ public class SocketService extends Service {
 
   private Socket socket;
 
+  private SharedPreferences sharedPreferences;
+
   public boolean isRunning;
 
   @Override
   public IBinder onBind(Intent intent) {
     isRunning = true;
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     return binder;
   }
 
@@ -75,19 +76,63 @@ public class SocketService extends Service {
     return START_STICKY;
   }
 
+  private Emitter.Listener onTransport = new Emitter.Listener() {
+    @Override
+    public void call(Object... args) {
+
+      Transport transport = (Transport) args[0];
+      transport.on(Transport.EVENT_REQUEST_HEADERS, new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+          if (sharedPreferences.contains("socket_headers")) {
+            Map<String, List<String>> defaultHeaders = (Map<String, List<String>>) args[0];
+            String headers = sharedPreferences.getString("socket_headers", "");
+            if (headers != null && !headers.isEmpty()) {
+              try {
+                JSONObject jsonObject = new JSONObject(headers.trim());
+                Iterator<String> keys = jsonObject.keys();
+                while (keys.hasNext()) {
+                  String key = keys.next();
+                  if (jsonObject.has(key)) {
+                    Log.d("key:", key + " value: " + jsonObject.getString(key));
+                    defaultHeaders.put(key, Collections.singletonList(jsonObject.getString(key)));
+                  }
+                }
+              } catch (JSONException e) {
+                Log.d(TAG, e.getMessage());
+              }
+            }
+          }
+        }
+      }).on(Transport.EVENT_RESPONSE_HEADERS, new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+        }
+      });
+    }
+  };
+
   private void connect(JSONArray args, CallbackContext callbackContext) {
 
-    String uri;
-
     try {
-      uri = args.getString(0);
 
-      IO.Options opts = new IO.Options();
-      opts.reconnection = true;
-      opts.reconnectionDelay = 60000;
-      opts.timeout = -1;
+      JSONObject object = args.getJSONObject(0);
 
-      socket = IO.socket(uri, opts);
+      String url = object.getString("url");
+
+      JSONObject headers = object.has("headers") ? object.getJSONObject("headers") : null;
+      if (headers != null) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("socket_headers", headers.toString());
+        editor.apply();
+      }
+
+      IO.Options opts = getOptions(object);
+
+      socket = IO.socket(url, opts);
+//      if (sharedPreferences.contains("socket_headers")) {
+//        socket.io().on(Manager.EVENT_TRANSPORT, onTransport);
+//      }
       socket.on(Socket.EVENT_CONNECT, args1 -> {
         callbackContext.success();
       });
@@ -232,6 +277,32 @@ public class SocketService extends Service {
       }
     }
     return bytes;
+  }
+
+  private IO.Options getOptions(JSONObject jsonObject) throws JSONException {
+    IO.Options options = new IO.Options();
+
+    options.reconnection = jsonObject.has("reconnection") ? jsonObject.getBoolean("reconnection") : options.reconnection;
+    options.reconnectionDelay = jsonObject.has("reconnectionDelay") ? jsonObject.getInt("reconnectionDelay") : options.reconnectionDelay;
+    options.timeout = jsonObject.has("timeout") ? jsonObject.getInt("timeout") : options.timeout;
+    options.forceNew = jsonObject.has("forceNew") ? jsonObject.getBoolean("forceNew") : options.forceNew;
+    options.query = jsonObject.has("query") ? jsonObject.getString("query") : options.query;
+    options.multiplex = jsonObject.has("multiplex") ? jsonObject.getBoolean("multiplex") : options.multiplex;
+    options.randomizationFactor = jsonObject.has("randomizationFactor") ? jsonObject.getDouble("randomizationFactor") : options.randomizationFactor;
+    options.reconnectionAttempts = jsonObject.has("reconnectionAttempts") ? jsonObject.getInt("reconnectionAttempts") : options.reconnectionAttempts;
+    options.reconnectionDelayMax = jsonObject.has("reconnectionDelayMax") ? jsonObject.getInt("reconnectionDelayMax") : options.reconnectionDelayMax;
+    options.rememberUpgrade = jsonObject.has("rememberUpgrade") ? jsonObject.getBoolean("rememberUpgrade") : options.rememberUpgrade;
+    options.upgrade = jsonObject.has("multiplex") ? jsonObject.getBoolean("multiplex") : options.multiplex;
+    options.host = jsonObject.has("host") ? jsonObject.getString("host") : options.host;
+    options.hostname = jsonObject.has("hostname") ? jsonObject.getString("hostname") : options.hostname;
+    options.path = jsonObject.has("path") ? jsonObject.getString("path") : options.path;
+    options.policyPort = jsonObject.has("policyPort") ? jsonObject.getInt("policyPort") : options.policyPort;
+    options.port = jsonObject.has("port") ? jsonObject.getInt("") : options.port;
+    options.secure = jsonObject.has("secure") ? jsonObject.getBoolean("") : options.secure;
+    options.timestampParam = jsonObject.has("timestampParam") ? jsonObject.getString("timestampParam") : options.timestampParam;
+    options.timestampRequests = jsonObject.has("timestampRequests") ? jsonObject.getBoolean("timestampRequests") : options.timestampRequests;
+
+    return options;
   }
 
   @Override
