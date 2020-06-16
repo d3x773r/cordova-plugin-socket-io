@@ -61,9 +61,24 @@ public class SocketIO extends CordovaPlugin {
   }
 
   public boolean execute(final String action, final JSONArray args, final CallbackContext callbackContext) {
-    final boolean[] rt = new boolean[]{false};
+    final boolean[] rt = new boolean[]{true};
 
-    new Handler().postDelayed(() -> {
+    if (!isMyServiceRunning(SocketService.class) || socketService == null) {
+      new Handler().postDelayed(() -> {
+        try {
+          Method method = socketService.getClass().getDeclaredMethod(
+            action,
+            JSONArray.class,
+            CallbackContext.class
+          );
+          method.setAccessible(true);
+          method.invoke(socketService, args, callbackContext);
+        } catch (Exception e) {
+          callbackContext.error(e.getMessage());
+          rt[0] = false;
+        }
+      }, 500);
+    } else {
       try {
         Method method = socketService.getClass().getDeclaredMethod(
           action,
@@ -72,13 +87,12 @@ public class SocketIO extends CordovaPlugin {
         );
         method.setAccessible(true);
         method.invoke(socketService, args, callbackContext);
-        rt[0] = true;
+        return true;
       } catch (Exception e) {
         callbackContext.error(e.getMessage());
-        rt[0] = false;
+        return false;
       }
-    }, 500);
-
+    }
     return rt[0];
   }
 
